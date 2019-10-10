@@ -1,12 +1,17 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Example from Node with React: Fullstack Web Development",
   "main": "index.js",
+  "engines": {
+    "node": "8.10.0",
+    "npm": "6.12.0"
+  },
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Sabit Rakhim",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
