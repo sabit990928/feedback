@@ -1,6 +1,6 @@
 {
-	"editor.fontSize": 18,
-	"files.exclude": {
-		"node_modules/": false
-},
+  "editor.fontSize": 18,
+  "files.exclude": {
+    "node_modules/": false
+  },
 }
