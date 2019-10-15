@@ -6,8 +6,7 @@ const passport = require('passport');
 const keys = require('./config/keys');
 require('./models/User');
 require('./services/passport');
-// tMudnKqMo11nHu1F
-// mongodb+srv://sabit-prod:tMudnKqMo11nHu1F@emaily-prod-jhr44.mongodb.net/feedback-prod?retryWrites=true&w=majority
+
 mongoose
   .connect(keys.mongoURI, {
     useNewUrlParser: true,
