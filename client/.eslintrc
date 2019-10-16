@@ -1,4 +1,7 @@
 {
   "extends": "wesbos",
-  "rules": {}
+  "rules": {
+    "react/prop-types": 0,
+    "react/destructuring-assignment": 0
+  }
 }
