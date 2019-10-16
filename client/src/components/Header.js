@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import Payments from './Payments';
 
 class Header extends Component {
   renderContent() {
-    switch (this.props.auth) {
+    const { auth } = this.props;
+    switch (auth) {
       case null:
         return 'Still deciding';
       case false:
@@ -14,17 +16,23 @@ class Header extends Component {
           </li>
         );
       default:
-        return (
-          <li>
+        return [
+          <li key="1">
+            <Payments />
+          </li>,
+          <li key="3" style={{ margin: '0 10px' }}>
+            Credits: {auth.credits}
+          </li>,
+          <li key="2">
             <a href="/api/logout">Logout</a>
-          </li>
-        );
+          </li>,
+        ];
     }
   }
 
   render() {
-    console.log('auth: ', this.props.auth);
     const { auth } = this.props;
+    console.log('auth: ', auth);
     return (
       <nav>
         <div className="nav-wrapper">
@@ -39,7 +47,7 @@ class Header extends Component {
 }
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
 });
 
 export default connect(
