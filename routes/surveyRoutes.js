@@ -13,30 +13,51 @@ module.exports = app => {
   // define an arrow function, immediately export it and
   // wired up in express app inside the top level index.js
 
-  app.get('/api/surveys/thanks', (req, res) => {
+  app.get('/api/surveys', requireUser, async (req, res) => {
+    const surveys = await Survey.find({ _user: req.user.id }).select({
+      recipients: false,
+    });
+    res.send(surveys);
+  });
+
+  app.get('/api/surveys/:surveyId/:choice', (req, res) => {
     res.send('Thanks for voting!');
   });
 
   app.post('/api/surveys/webhooks', (req, res) => {
     // all events in req.body
-    const events = _.map(req.body, ({ email, url }) => {
-      const { pathname } = new URL(url);
-      const p = new Path('/api/surveys/:surveyId/:choice');
-      const match = p.test(pathname);
-      // console.log('test:', p.test(pathname));
-      if (match) {
-        return {
-          email,
-          surveyId: match.surveyId,
-          choice: match.choice,
-        };
-      }
-    });
-    const compactEvents = _.compact(events); // remove undefined values
-    const uniqueEvents = _.uniqBy(compactEvents, 'email', 'surveyId');
+    const p = new Path('/api/surveys/:surveyId/:choice');
+    _.chain(req.body)
+      .map(({ email, url }) => {
+        const match = p.test(new URL(url).pathname);
+        if (match) {
+          return {
+            email,
+            surveyId: match.surveyId,
+            choice: match.choice,
+          };
+        }
+      })
+      .compact() // remove undefined values
+      .uniqBy('email', 'surveyId')
+      .each(({ surveyId, email, choice }) => {
+        Survey.updateOne(
+          {
+            _id: surveyId,
+            recipients: {
+              $elemMatch: { email, responded: false },
+            },
+          },
+          {
+            // update with this one
+            $inc: { [choice]: 1 }, // key interpolation
+            $set: { 'recipients.$.responded': true }, // $ element from original query, appropriate recipient
+            lastResponded: new Date(),
+          }
+        ).exec();
+      })
+      .value(); // return newly processed array
 
-    console.log('unique: ', uniqueEvents);
-    console.log('events: ', events);
     res.send({});
   });
 
